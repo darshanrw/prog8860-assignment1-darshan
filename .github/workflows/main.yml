@@ -1,62 +1,39 @@
 name: Docker CI Pipeline
- 
-# Temporary trigger on push to feature branch for testing
+
 on:
   push:
     branches:
-      - feature-branch  
- 
+      - feature-branch  # Trigger on push to feature-branch for testing
+
 jobs:
-  build:
-    name: Build Docker Image
-    runs-on: ubuntu-latest
- 
+  docker:
+    runs-on: ubuntu-latest  # Run on the latest Ubuntu runner
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
- 
+
     - name: Set up Docker
       uses: docker/setup-buildx-action@v2
 
-    - name: Cache Docker layers
+    - name: Cache Docker Layers
       uses: actions/cache@v2
       with:
         path: /tmp/.buildx-cache
         key: ${{ runner.os }}-buildx-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-buildx-
- 
+
     - name: Build Docker Image
-      run: |
-        docker build -t express-app:darshan .
- 
-  run:
-    name: Run Docker Container
-    runs-on: ubuntu-latest
-    needs: build
- 
-    steps:
-    - name: Set up Docker
-      uses: docker/setup-buildx-action@v2
- 
-    - name: Run the Docker Container
-      run: |
-        docker run -d --name assignmemnt1 -p 8080:8080 express-app:darshan
- 
-    - name: Verify Container is Running
-      run: |
-        docker ps -a
- 
-  stop:
-    name: Stop Docker Container
-    runs-on: ubuntu-latest
-    needs: run
- 
-    steps:
-    - name: Set up Docker
-      uses: docker/setup-buildx-action@v2
- 
-    - name: Stop and Remove Container
+      run: docker build -t express-app .
+
+    - name: Run Docker Container
+      run: docker run -d --name assignment1 -p 8080:8080 express-app
+
+    - name: Verify Running Container
+      run: docker ps -a
+
+    - name: Stop and Remove Docker Container
       run: |
         docker stop assignment1
         docker rm assignment1
