@@ -1,10 +1,13 @@
 name: Docker CI Pipeline
-
+ 
 on:
-  pull:
+  pull_request:
     branches:
-      - main  # Trigger on pull 
+      - feature-branch
 
+  push:
+    branches:
+      - main
 jobs:
   docker:
     runs-on: ubuntu-latest  # Run on the latest Ubuntu runner
