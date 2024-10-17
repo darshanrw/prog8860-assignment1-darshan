@@ -16,24 +16,58 @@ jobs:
     - name: Set up Docker
       uses: docker/setup-buildx-action@v2
 
-    - name: Cache Docker Layers
+    - name: Cache Docker Layersname: Docker CI Pipeline
+ 
+# Temporary trigger on push to feature branch for testing
+on:
+  push:
+    branches:
+      - feature-branch  
+ 
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+ 
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Cache Docker layers
       uses: actions/cache@v2
       with:
         path: /tmp/.buildx-cache
         key: ${{ runner.os }}-buildx-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-buildx-
-
+ 
     - name: Build Docker Image
-      run: docker build -t express-app .
-
-    - name: Run Docker Container
-      run: docker run -d --name assignment1 -p 8080:8080 express-app
-
-    - name: Verify Running Container
-      run: docker ps -a
-
-    - name: Stop and Remove Docker Container
+      run: |
+        docker build -t express-app .
+ 
+  run:
+    needs: build
+ 
+    steps:
+ 
+    - name: Run the Docker Container
+      run: |
+        docker run -d --name assignmemnt1 -p 8080:8080 express-app
+ 
+    - name: Verify Container is Running
+      run: |
+        docker ps -a
+ 
+  stop:
+    needs: run
+ 
+    steps:
+ 
+    - name: Stop and Remove Container
       run: |
         docker stop assignment1
         docker rm assignment1
+      
