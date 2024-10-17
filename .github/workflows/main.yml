@@ -4,7 +4,7 @@ name: Docker CI Pipeline
 on:
   push:
     branches:
-      - feature-branch  # Replace with your actual feature branch name
+      - feature-branch  
  
 jobs:
   build:
@@ -17,10 +17,18 @@ jobs:
  
     - name: Set up Docker
       uses: docker/setup-buildx-action@v2
+
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
  
     - name: Build Docker Image
       run: |
-        docker build -t express-app .
+        docker build -t express-app:darshan .
  
   run:
     name: Run Docker Container
@@ -33,11 +41,11 @@ jobs:
  
     - name: Run the Docker Container
       run: |
-        docker run -d --name express-app -p 8080:8080 express-app
+        docker run -d --name assignmemnt1 -p 8080:8080 express-app:darshan
  
     - name: Verify Container is Running
       run: |
-        docker ps | grep express-app
+        docker ps -a
  
   stop:
     name: Stop Docker Container
@@ -50,5 +58,5 @@ jobs:
  
     - name: Stop and Remove Container
       run: |
-        docker stop express-app
-        docker rm express-app
+        docker stop assignment1
+        docker rm assignment1
