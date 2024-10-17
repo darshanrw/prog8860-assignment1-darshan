@@ -1,14 +1,18 @@
 name: Docker CI Pipeline
+
 on:
   push:
     branches:
       - feature-branch  # Trigger on push to feature-branch for testing
+
 jobs:
   docker:
     runs-on: ubuntu-latest  # Run on the latest Ubuntu runner
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
+
     - name: Set up Docker
       uses: docker/setup-buildx-action@v2
 
@@ -21,10 +25,17 @@ jobs:
           ${{ runner.os }}-buildx-
     - name: Build Docker Image
       run: docker build -t express-app .
-    - name: verify Image
-      run: docker image ls 
+
+    - name: Verify Docker Image
+      run: docker image ls
+
     - name: Run Docker Container
       run: docker run -d --name assignment1 -p 8080:8080 express-app
+
     - name: Verify Running Container
       run: docker ps -a
+
     - name: Stop and Remove Docker Container
+      run: |
+        docker stop assignment1
+        docker rm assignment1
